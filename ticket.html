@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bus Ticket Confirmation</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<div class="container">
+		<h1>Ticket Confirmation</h1>
+		<div id="ticketDetails" class="ticket">
+			<p><strong>From:</strong> <span id="fromLocation"></span></p>
+			<p><strong>To:</strong> <span id="toLocation"></span></p>
+			<p><strong>Date:</strong> <span id="travelDate"></span></p>
+			<p><strong>Number of Seats:</strong> <span id="numberOfSeats"></span></p>
+			<p><strong>Payment (Card Number):</strong> <span id="cardDetails"></span></p>
+		</div>
+		<button onclick="window.print()">Download Ticket</button>
+		<button onclick="window.location.href='index.html'">Back to Home</button>
+	</div>
+	<script>
+		// Retrieve ticket details from localStorage
+		document.getElementById("fromLocation").textContent = localStorage.getItem("from");
+		document.getElementById("toLocation").textContent = localStorage.getItem("to");
+		document.getElementById("travelDate").textContent = localStorage.getItem("date");
+		document.getElementById("numberOfSeats").textContent = localStorage.getItem("seats");
+		document.getElementById("cardDetails").textContent = localStorage.getItem("cardNumber");
+	</script>
+</body>
+</html>

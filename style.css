@@ -1,0 +1,79 @@
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #50727B;
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.container {
+	margin: 20px;
+	width: 60%;
+	padding: 30px;
+	background-color: #344955;
+	box-shadow: 0px 0px 15px #5f7684;
+	border-radius: 10px;
+	text-align: center;
+}
+
+h1, h2, h3 {
+	color: #ffffff;
+}
+
+.form, .ticket {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+label {
+	display: inline-block;
+	margin-top: 10px;
+	font-weight: bold;
+	width: 100%;
+	text-align: left;
+}
+
+input[type="text"], input[type="date"], input[type="number"], input[type="month"], input[type="password"] {
+	padding: 10px;
+	margin: 10px 0;
+	width: 100%;
+	border: none;
+	border-radius: 3px;
+	box-shadow: 0px 0px 5px #ddd;
+}
+
+button {
+	padding: 10px 20px;
+	margin-top: 20px;
+	background-color: #50727B;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	width: 50%;
+}
+
+button:hover {
+	background-color: #76ABAE;
+}
+
+.footer {
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	bottom: 0;
+	height: 40px;
+	width: 100%;
+	background-color: aqua;
+	text-align: center;
+}
