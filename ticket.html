@@ -1,81 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Bus Ticket Confirmation</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Ticket Confirmation</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>
 <body>
-	<div class="container">
-		<h1>Ticket Confirmation</h1>
-		<div id="ticketDetails" class="ticket">
-			<p><strong>Ticket Number:</strong> <span id="ticketNumber"></span></p>
-			<p><strong>From:</strong> <span id="fromLocation"></span></p>
-			<p><strong>To:</strong> <span id="toLocation"></span></p>
-			<p><strong>Date:</strong> <span id="travelDate"></span></p>
-			<p><strong>Number of Seats:</strong> <span id="numberOfSeats"></span></p>
-			<p><strong>Payment (Card Number):</strong> <span id="cardDetails"></span></p>
-		</div>
-		<div class="actions">
-			<button onclick="downloadTicket()">Download Ticket</button>
-			<button onclick="shareOnWhatsApp()">Send via WhatsApp</button>
-			<button onclick="window.location.href='index.html'">Back to Home</button>
-		</div>
-	</div>
+    <div class="container">
+        <h1>Ticket Confirmation</h1>
+        <div id="ticketDetails" class="ticket">
+            <p><strong>Ticket Number:</strong> <span id="ticketNumber"></span></p>
+            <p><strong>From:</strong> <span id="fromLocation"></span></p>
+            <p><strong>To:</strong> <span id="toLocation"></span></p>
+            <p><strong>Date:</strong> <span id="travelDate"></span></p>
+            <p><strong>Number of Seats:</strong> <span id="numberOfSeats"></span></p>
+            <p><strong>Payment (Card Number):</strong> <span id="cardDetails"></span></p>
+        </div>
+        <div class="actions">
+            <button onclick="generatePDF()">Download PDF Ticket</button>
+            <button onclick="sharePDFOnWhatsApp()">Share PDF via WhatsApp</button>
+            <button onclick="window.location.href='index.html'">Back to Home</button>
+        </div>
+    </div>
 
-	<script>
-		const ticketNumber = localStorage.getItem("ticketNumber");
-		const from = localStorage.getItem("from");
-		const to = localStorage.getItem("to");
-		const date = localStorage.getItem("date");
-		const seats = localStorage.getItem("seats");
-		const cardNumber = localStorage.getItem("cardNumber");
-		const phone = localStorage.getItem("phone");
-		document.getElementById("ticketNumber").textContent = ticketNumber;
-		document.getElementById("fromLocation").textContent = from;
-		document.getElementById("toLocation").textContent = to;
-		document.getElementById("travelDate").textContent = date;
-		document.getElementById("numberOfSeats").textContent = seats;
-		document.getElementById("cardDetails").textContent = "**** **** **** " + cardNumber;
+    <script>
+        // Retrieve ticket details from localStorage
+        const ticketNumber = localStorage.getItem("ticketNumber");
+        const from = localStorage.getItem("from");
+        const to = localStorage.getItem("to");
+        const date = localStorage.getItem("date");
+        const seats = localStorage.getItem("seats");
+        const cardNumber = localStorage.getItem("cardNumber");
+        const phone = localStorage.getItem("phone");
 
-		
-		function downloadTicket() {
-			const ticketContent = `
-🚍 Bus Ticket Details 🚍
-Ticket Number: ${ticketNumber}
-From: ${from}
-To: ${to}
-Date: ${date}
-Seats: ${seats}
-Payment (Card Number): **** **** **** ${cardNumber}
-`;
+        // Display ticket details
+        document.getElementById("ticketNumber").textContent = ticketNumber;
+        document.getElementById("fromLocation").textContent = from;
+        document.getElementById("toLocation").textContent = to;
+        document.getElementById("travelDate").textContent = date;
+        document.getElementById("numberOfSeats").textContent = seats;
+        document.getElementById("cardDetails").textContent = "**** **** **** " + cardNumber;
 
-			const blob = new Blob([ticketContent], { type: "text/plain" });
-			const link = document.createElement("a");
-			link.href = URL.createObjectURL(blob);
-			link.download = `Ticket_${ticketNumber}.txt`;
-			link.click();
-		}
+        // Generate PDF Ticket
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-		
-		function shareOnWhatsApp() {
-			const whatsappMessage = `
+            // Add ticket details to PDF
+            doc.setFontSize(16);
+            doc.text("🚍 Bus Ticket Details 🚍", 20, 20);
+            doc.setFontSize(12);
+            doc.text(`Ticket Number: ${ticketNumber}`, 20, 40);
+            doc.text(`From: ${from}`, 20, 50);
+            doc.text(`To: ${to}`, 20, 60);
+            doc.text(`Date: ${date}`, 20, 70);
+            doc.text(`Seats: ${seats}`, 20, 80);
+            doc.text(`Payment (Card Number): **** **** **** ${cardNumber}`, 20, 90);
+
+            // Save the PDF locally
+            const pdfFileName = `Ticket_${ticketNumber}.pdf`;
+            doc.save(pdfFileName);
+
+            // Convert PDF to Blob for WhatsApp sharing
+            const pdfBlob = await doc.output("blob");
+            return { blob: pdfBlob, name: pdfFileName };
+        }
+
+        // Share PDF via WhatsApp
+        async function sharePDFOnWhatsApp() {
+            const { blob, name } = await generatePDF();
+
+            // Prepare WhatsApp message
+            const whatsappMessage = `
 🚍 *Bus Ticket Details* 🚍
 *Ticket Number:* ${ticketNumber}
 *From:* ${from}
 *To:* ${to}
 *Date:* ${date}
 *Seats:* ${seats}
-*Payment (Card Number):* **** **** **** ${cardNumber}
-
 Thank you for booking with us!
-			`;
+            `;
 
-			
-			const whatsappURL = `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`;
-			window.open(whatsappURL, "_blank");
-		}
-	</script>
+            // Use Web Share API if supported
+            if (navigator.canShare && navigator.canShare({ files: [new File([blob], name)] })) {
+                navigator.share({
+                    title: "Bus Ticket",
+                    text: whatsappMessage,
+                    files: [new File([blob], name)],
+                });
+            } else {
+                // Fallback: Use WhatsApp Web URL (cannot attach PDF directly)
+                const whatsappURL = `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`;
+                alert("Your browser doesn't support direct file sharing. Redirecting to WhatsApp Web.");
+                window.open(whatsappURL, "_blank");
+            }
+        }
+    </script>
 </body>
 </html>
