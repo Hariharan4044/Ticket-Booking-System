@@ -26,7 +26,7 @@
     </div>
 
     <script>
-        // Retrieve ticket details from localStorage
+        
         const ticketNumber = localStorage.getItem("ticketNumber");
         const from = localStorage.getItem("from");
         const to = localStorage.getItem("to");
@@ -35,7 +35,6 @@
         const cardNumber = localStorage.getItem("cardNumber");
         const phone = localStorage.getItem("phone");
 
-        // Display ticket details
         document.getElementById("ticketNumber").textContent = ticketNumber;
         document.getElementById("fromLocation").textContent = from;
         document.getElementById("toLocation").textContent = to;
@@ -43,12 +42,11 @@
         document.getElementById("numberOfSeats").textContent = seats;
         document.getElementById("cardDetails").textContent = "**** **** **** " + cardNumber;
 
-        // Generate PDF Ticket
         async function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Add ticket details to PDF
+            
             doc.setFontSize(16);
             doc.text("🚍 Bus Ticket Details 🚍", 20, 20);
             doc.setFontSize(12);
@@ -59,20 +57,20 @@
             doc.text(`Seats: ${seats}`, 20, 80);
             doc.text(`Payment (Card Number): **** **** **** ${cardNumber}`, 20, 90);
 
-            // Save the PDF locally
+            
             const pdfFileName = `Ticket_${ticketNumber}.pdf`;
             doc.save(pdfFileName);
 
-            // Convert PDF to Blob for WhatsApp sharing
+           
             const pdfBlob = await doc.output("blob");
             return { blob: pdfBlob, name: pdfFileName };
         }
 
-        // Share PDF via WhatsApp
+  
         async function sharePDFOnWhatsApp() {
             const { blob, name } = await generatePDF();
 
-            // Prepare WhatsApp message
+         
             const whatsappMessage = `
 🚍 *Bus Ticket Details* 🚍
 *Ticket Number:* ${ticketNumber}
@@ -83,7 +81,7 @@
 Thank you for booking with us!
             `;
 
-            // Use Web Share API if supported
+           
             if (navigator.canShare && navigator.canShare({ files: [new File([blob], name)] })) {
                 navigator.share({
                     title: "Bus Ticket",
@@ -91,7 +89,7 @@ Thank you for booking with us!
                     files: [new File([blob], name)],
                 });
             } else {
-                // Fallback: Use WhatsApp Web URL (cannot attach PDF directly)
+               
                 const whatsappURL = `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`;
                 alert("Your browser doesn't support direct file sharing. Redirecting to WhatsApp Web.");
                 window.open(whatsappURL, "_blank");
