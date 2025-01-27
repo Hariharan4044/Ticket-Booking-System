@@ -13,7 +13,7 @@ function bookTickets() {
 	}
 
 	if (cardNumber.length !== 16 || isNaN(cardNumber)) {
-		alert("Please enter a valid 16-digit card number.");
+		alert("Please enter a valid 16-digit card number:");
 		return;
 	}
 
